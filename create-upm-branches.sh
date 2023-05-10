@@ -3,6 +3,7 @@ git config user.name "github-actions[bot]"
 git config user.email "github-actions[bot]@users.noreply.github.com"
 git subtree split -P "$PKG_ROOT_DIR_PATH" -b $UPM_BRANCH
 git checkout $UPM_BRANCH
+git checkout $MAIN_BRANCH $SAMPLES_DIR &> /dev/null || echo $SAMPLES_DIR is not found
 for file in $ROOT_FILES; do
     git checkout $MAIN_BRANCH $file &> /dev/null || echo $file is not found
     if [ -f $file ]; then
@@ -14,7 +15,7 @@ for file in $ROOT_FILES; do
 done
 sed -i -e "s/\"version\":.*$/\"version\": \"$TAG\",/" package.json || echo package.json is not found
 git mv $SAMPLES_DIR Samples~ &> /dev/null || echo $SAMPLES_DIR is not found
-git rm $SAMPLES_DIR.meta
+git rm $SAMPLES_DIR.meta &> /dev/null
 git commit -m "release $TAG."
 git push -f origin $UPM_BRANCH
 git checkout -b $UPM_BRANCH@$TAG
